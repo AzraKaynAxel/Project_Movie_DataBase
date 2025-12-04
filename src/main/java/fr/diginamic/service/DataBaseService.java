@@ -7,11 +7,10 @@ import javax.persistence.Persistence;
 
 public class DataBaseService {
 
-    public static EntityManager connexionDataBase (){
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ConfigDev1");
-        EntityManager em = emf.createEntityManager();
+    private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("ConfigDev1");;
 
-        return em;
+    public static EntityManager connexionDataBase (){
+        return emf.createEntityManager();
     }
 
     public void insertionDataBase(String monPath) {
