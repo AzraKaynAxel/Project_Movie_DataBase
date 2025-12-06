@@ -1,7 +1,6 @@
 package fr.diginamic;
 
-import fr.diginamic.service.CsvService;
-import fr.diginamic.service.DataBaseService;
+import fr.diginamic.services.CsvService;
 
 public class Runner {
     public static void main(String[] args) {
