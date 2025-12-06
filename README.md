@@ -26,6 +26,14 @@
 
 *voir `src/main/java/fr/diginamic/service`* 📝.
 
+### Réalisation sur la branche *`feature/TraitementFichier`*
+- **3) Implémentation du traitement de fichier** 📄:
+    - Lecture et traitement de fichiers CSV
+    - Méthodes : 
+      - `lectureDeFichierCSV(String monPath)` - Traitement complet des fichiers de données.
+
+*voir `src/main/java/fr/diginamic/service`* 📝.
+
 ## Tests 🧪:
  - `DataBaseServiceTest.java` - Tests du service de base de données avec JUnit Jupiter
     

@@ -1,4 +1,4 @@
-package fr.diginamic.service;
+package fr.diginamic.services;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -17,12 +17,13 @@ public class DataBaseService {
         EntityManager em = connexionDataBase();
         EntityTransaction transaction = em.getTransaction();
 
+        CsvService csvService = new CsvService();
+        //String[] mesValeurs = csvService.traitementDesFilms(monPath);
+        //System.out.println(Arrays.toString(mesValeurs));
         transaction.begin();
 
+
+
         transaction.commit();
-    }
-
-    public void lectureDeFichierCSV(String monPath) {
-
     }
 }

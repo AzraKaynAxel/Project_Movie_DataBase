@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Table(name="Acteur")
 public class Acteur extends Personne{
 
-    @Column(name="taille", nullable=false ,precision=3,scale=2)
+    @Column(name="taille (m)", nullable=false ,precision=3,scale=2)
     private float taille;
 
 
