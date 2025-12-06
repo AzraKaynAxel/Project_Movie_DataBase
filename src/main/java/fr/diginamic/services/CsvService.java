@@ -2,6 +2,8 @@ package fr.diginamic.services;
 
 import fr.diginamic.entites.Acteur;
 import fr.diginamic.entites.Film;
+import fr.diginamic.entites.Pays;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -119,5 +121,22 @@ public class CsvService {
             //System.out.println(acteurs);
         }
         System.out.println(acteurs);
+    }
+
+    public void traitementDesPays(String monPath) {
+        lectureDeFichierCSV(monPath);
+        List<Pays> mesPays = new ArrayList<>();
+
+        for (int i = iMin; i < iMax; i++) {
+            String[] values = lines.get(i).split(";");
+
+            Pays pays = new Pays();
+            pays.setNom(values[0]);
+            pays.setUrl(values[1]);
+
+            mesPays.add(pays);
+            System.out.println(mesPays);
+        }
+        System.out.println(Arrays.toString(mesPays.toArray()));
     }
 }
