@@ -1,4 +1,4 @@
-package fr.diginamic.service;
+package fr.diginamic.services;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
