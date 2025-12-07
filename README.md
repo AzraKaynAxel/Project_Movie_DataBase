@@ -30,9 +30,12 @@
 - **3) Implémentation du traitement de fichier** 📄:
     - Lecture et traitement de fichiers CSV
     - Méthodes : 
-      - `lectureDeFichierCSV(String monPath)` - Traitement complet des fichiers de données.
+      - `lectureDeFichierCSV(String monPath)` - Lecture d'un fichier CSV et stockage des lignes (sans l'en-tête).
+      - `traitementDesFilms(String monPath)` - Traitement des données de films depuis un fichier CSV et retour d'une liste d'instances `Film`.
+      - `traitementDesActeurs(String monPath)` - Traitement des données d'acteurs depuis un fichier CSV avec gestion des dates et lieux de naissance.
+      - `traitementDesPays(String monPath)` - Traitement des données de pays depuis un fichier CSV. Cette méthode lit un fichier CSV, parse chaque ligne séparée par ";" pour extraire le nom du pays (colonne 0) et l'URL (colonne 1), puis crée une liste d'instances `Pays` avec ces informations.
 
-*voir `src/main/java/fr/diginamic/service`* 📝.
+*voir `src/main/java/fr/diginamic/services`* 📝.
 
 ## Tests 🧪:
  - `DataBaseServiceTest.java` - Tests du service de base de données avec JUnit Jupiter
