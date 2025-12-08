@@ -7,10 +7,10 @@ import javax.persistence.Table;
 import java.time.LocalDate;
 
 @Entity
-@Table(name="Acteur")
+@Table(name="acteur")
 public class Acteur extends Personne{
 
-    @Column(name="taille (m)", nullable=false ,precision=3,scale=2)
+    @Column(name="taille_m", nullable=false ,precision=3,scale=2)
     private float taille;
 
 

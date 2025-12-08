@@ -26,7 +26,7 @@ public class Film {
     private String nom;
 
     @Column(name = "date_sortie", nullable = false)
-    private LocalDate dateSortie;
+    private String dateSortie;
 
     @Column(name = "rating", nullable = true, precision=4, scale=2)
     private float rating;
@@ -79,7 +79,7 @@ public class Film {
      * @param resume
      * @param pays
      */
-    public Film(String id, String nom, LocalDate dateSortie, float rating, String url, String lieuTournage, Set<Genre> genres, Langue langue, String resume, Pays pays) {
+    public Film(String id, String nom, String dateSortie, float rating, String url, String lieuTournage, Set<Genre> genres, Langue langue, String resume, Pays pays) {
         this.id = id;
         this.nom = nom;
         this.dateSortie = dateSortie;
@@ -133,7 +133,7 @@ public class Film {
      *
      * @return dateSortie
      */
-    public LocalDate getDateSortie() {
+    public String getDateSortie() {
         return dateSortie;
     }
 
@@ -142,7 +142,7 @@ public class Film {
      *
      * @param dateSortie
      */
-    public void setDateSortie(LocalDate dateSortie) {
+    public void setDateSortie(String dateSortie) {
         this.dateSortie = dateSortie;
     }
 

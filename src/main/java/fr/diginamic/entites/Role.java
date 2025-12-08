@@ -25,7 +25,7 @@ public class Role {
     private Film film;
 
     @ManyToOne
-    @JoinColumn(name="id_Acteur", nullable = true)
+    @JoinColumn(name="id_Acteur", nullable = false)
     private Acteur acteur;
 
 
