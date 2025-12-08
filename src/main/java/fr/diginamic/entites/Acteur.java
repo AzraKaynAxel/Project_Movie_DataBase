@@ -28,7 +28,7 @@ public class Acteur extends Personne{
      * @param url
      * @param taille
      */
-    public Acteur(String id, String identite, LocalDate dateAnniversaire, LieuNaissance lieuNaissance, String url, float taille) {
+    public Acteur(String id, String identite, String dateAnniversaire, LieuNaissance lieuNaissance, String url, float taille) {
         super(id, identite, dateAnniversaire, lieuNaissance, url);
         this.taille = taille;
     }

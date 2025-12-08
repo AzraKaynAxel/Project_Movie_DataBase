@@ -14,7 +14,7 @@ import java.time.LocalDate;
 import java.util.Set;
 
 @Entity
-@Table(name="personne")
+@Table(name="realisateur")
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Personne {
 
@@ -25,11 +25,11 @@ public class Personne {
     @Column(name = "identite", length = 50, nullable = false)
     private String identite;
 
-    @Column(name = "date_anniversaire", nullable = false)
-    private LocalDate dateAnniversaire;
+    @Column(name = "date_anniversaire", nullable = true)
+    private String dateAnniversaire;
 
     @ManyToOne
-    @JoinColumn(name="id_lieu_naissance")
+    @JoinColumn(name="id_lieu_naissance", nullable = true)
     private LieuNaissance lieuNaissance;
 
     @Column(name = "url", length = 255, nullable = true)
@@ -54,7 +54,7 @@ public class Personne {
      * @param lieuNaissance
      * @param url
      */
-    public Personne(String id, String identite, LocalDate dateAnniversaire, LieuNaissance lieuNaissance, String url) {
+    public Personne(String id, String identite, String dateAnniversaire, LieuNaissance lieuNaissance, String url) {
         this.id = id;
         this.identite = identite;
         this.dateAnniversaire = dateAnniversaire;
@@ -67,7 +67,7 @@ public class Personne {
      *
      * @return dateAnniversaire
      */
-    public LocalDate getDateAnniversaire() {
+    public String getDateAnniversaire() {
         return dateAnniversaire;
     }
 
@@ -77,7 +77,7 @@ public class Personne {
      *
      * @param dateAnniversaire
      */
-    public void setDateAnniversaire(LocalDate dateAnniversaire) {
+    public void setDateAnniversaire(String dateAnniversaire) {
         this.dateAnniversaire = dateAnniversaire;
     }
 
