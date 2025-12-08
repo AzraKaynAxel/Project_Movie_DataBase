@@ -2,6 +2,7 @@ package fr.diginamic.services;
 
 import fr.diginamic.entites.Acteur;
 import fr.diginamic.entites.Film;
+import fr.diginamic.entites.LieuNaissance;
 import fr.diginamic.entites.Pays;
 
 import java.io.IOException;
@@ -54,7 +55,7 @@ public class CsvService {
             Film film = new Film();
             film.setId(values[0]);
             film.setNom(values[1]);
-            film.setDateSortie(LocalDate.parse(values[2], pattern));
+            //film.setDateSortie(LocalDate.parse(values[2], pattern));
             film.setRating(Float.parseFloat(values[3]));
             film.setUrl(values[4]);
             film.setLieuTournage(values[5]);
@@ -67,10 +68,10 @@ public class CsvService {
 
     /**
      * @param monPath
+     * @return
      *
      * Cette méthode à pour objectif de retourner une liste d'intance d'acteur avec les propriétés
      * Objectif de na pas avoir de duplication de données.
-     * Et que chose soit a ça place ex. Pays dans la table pays
      *
      */
     public void traitementDesActeurs(String monPath) {
@@ -91,7 +92,7 @@ public class CsvService {
 
         for (int i = iMin; i < iMax; i++) {
             String[] values = lines.get(i).split(";");
-            String[] naissance = values[3].split(",");
+            /*String[] naissance = values[3].split(",");
             StringBuilder monNouveauLieux = new StringBuilder();
 
             for (int j = 0; j < naissance.length - 1; j++) {
@@ -100,21 +101,20 @@ public class CsvService {
                 } else  {
                     monNouveauLieux.append(naissance[j].trim());
                 }
-            }
+            }*/
 
             String dateString = values[2];
             LocalDate date = LocalDate.parse(dateString.trim(), pattern);
+            LieuNaissance lieuNaissance = new LieuNaissance();
+            lieuNaissance.setLocalisation(values[3]);
 
 
             Acteur acteur = new Acteur();
 
-
-            System.out.println(acteur.getTaille());
-
             acteur.setId(values[0]);
             acteur.setIdentite(values[1]);
             acteur.setDateAnniversaire(date);
-            acteur.setLieuNaissance(String.valueOf(monNouveauLieux));
+            acteur.setLieuNaissance(lieuNaissance);
             acteur.setTaille(Float.parseFloat(values[4].replace(" m", "")));
             acteur.setUrl(values[5]);
             acteurs.add(acteur);
@@ -123,7 +123,11 @@ public class CsvService {
         System.out.println(acteurs);
     }
 
-    public void traitementDesPays(String monPath) {
+    /**
+     * @param monPath
+     * @return
+     */
+    public List<Pays> traitementDesPays(String monPath) {
         lectureDeFichierCSV(monPath);
         List<Pays> mesPays = new ArrayList<>();
 
@@ -137,6 +141,6 @@ public class CsvService {
             mesPays.add(pays);
             System.out.println(mesPays);
         }
-        System.out.println(Arrays.toString(mesPays.toArray()));
+        return mesPays;
     }
 }

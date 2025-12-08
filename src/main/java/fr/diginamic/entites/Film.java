@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -70,7 +71,7 @@ public class Film {
      *
      * @param id
      * @param nom
-     * @param dateSortie
+     * @param anneeSortie
      * @param rating
      * @param url
      * @param lieuTournage
@@ -140,7 +141,7 @@ public class Film {
     /**
      * Setter for dateSortie
      *
-     * @param dateSortie
+     * @param anneeSortie
      */
     public void setDateSortie(String dateSortie) {
         this.dateSortie = dateSortie;

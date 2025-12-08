@@ -15,13 +15,11 @@ import java.util.Set;
 
 @Entity
 @Table(name="personne")
-/**
- * @Inheritance pour faire de personne et acteur 2 tables différentes
- */
-@Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 public class Personne {
 
     @Id
+    @Column(name="id", nullable=false)
     private String id;
 
     @Column(name = "identite", length = 50, nullable = false)
@@ -30,15 +28,12 @@ public class Personne {
     @Column(name = "date_anniversaire", nullable = false)
     private LocalDate dateAnniversaire;
 
-    @Column(name = "lieu_naissance", length = 50, nullable = false)
-    private String lieuNaissance;
+    @ManyToOne
+    @JoinColumn(name="id_lieu_naissance")
+    private LieuNaissance lieuNaissance;
 
     @Column(name = "url", length = 255, nullable = true)
     private String url;
-
-    @ManyToOne
-    @JoinColumn(name="id_pays")
-    private Pays pays;
 
     @ManyToMany
     @JoinTable(name="fil_pers", joinColumns=@JoinColumn(name="id_pers", referencedColumnName="id"), inverseJoinColumns=@JoinColumn(name="id_fil", referencedColumnName="id"))
@@ -57,15 +52,13 @@ public class Personne {
      * @param identite
      * @param dateAnniversaire
      * @param lieuNaissance
-     * @param pays
      * @param url
      */
-    public Personne(String id, String identite, LocalDate dateAnniversaire, String lieuNaissance, Pays pays, String url) {
+    public Personne(String id, String identite, LocalDate dateAnniversaire, LieuNaissance lieuNaissance, String url) {
         this.id = id;
         this.identite = identite;
         this.dateAnniversaire = dateAnniversaire;
         this.lieuNaissance = lieuNaissance;
-        this.pays = pays;
         this.url = url;
     }
 
@@ -129,7 +122,7 @@ public class Personne {
      *
      * @return lieuNaissance
      */
-    public String getLieuNaissance() {
+    public LieuNaissance getLieuNaissance() {
         return lieuNaissance;
     }
 
@@ -138,26 +131,8 @@ public class Personne {
      *
      * @param lieuNaissance
      */
-    public void setLieuNaissance(String lieuNaissance) {
+    public void setLieuNaissance(LieuNaissance lieuNaissance) {
         this.lieuNaissance = lieuNaissance;
-    }
-
-    /**
-     * Getter for pays
-     *
-     * @return pays
-     */
-    public Pays getPays() {
-        return pays;
-    }
-
-    /**
-     * Setter for pays
-     *
-     * @param pays
-     */
-    public void setPays(Pays pays) {
-        this.pays = pays;
     }
 
     /**
@@ -192,10 +167,8 @@ public class Personne {
         return "id= '" + id + '\'' +
                 ", identite= '" + identite + '\'' +
                 ", lieuNaissance= '" + lieuNaissance + '\'' +
-                ", pays=" + pays +
                 ", dateAnniversaire= " + dateAnniversaire +
                 ", url='" + url + '\'' +
                 ", films= " + films;
     }
 }
-
