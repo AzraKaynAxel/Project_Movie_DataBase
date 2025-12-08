@@ -189,12 +189,12 @@ public class Personne {
 
     @Override
     public String toString() {
-        return ", id= '" + id + '\'' +
+        return "id= '" + id + '\'' +
                 ", identite= '" + identite + '\'' +
                 ", lieuNaissance= '" + lieuNaissance + '\'' +
+                ", pays=" + pays +
                 ", dateAnniversaire= " + dateAnniversaire +
                 ", url='" + url + '\'' +
-                ", pays=" + pays +
                 ", films= " + films;
     }
 }
