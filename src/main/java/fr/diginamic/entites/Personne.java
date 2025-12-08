@@ -3,6 +3,8 @@ package fr.diginamic.entites;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
@@ -13,6 +15,10 @@ import java.util.Set;
 
 @Entity
 @Table(name="personne")
+/**
+ * @Inheritance pour faire de personne et acteur 2 tables différentes
+ */
+@Inheritance(strategy= InheritanceType.TABLE_PER_CLASS)
 public class Personne {
 
     @Id
