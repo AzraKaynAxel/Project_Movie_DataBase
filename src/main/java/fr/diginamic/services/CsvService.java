@@ -70,11 +70,11 @@ public class CsvService {
      * @param monPath
      * @return
      *
-     * Cette méthode à pour objectif de retourner une liste d'intance d'acteur avec les propriétés
+     * Cette méthode à pour objectif de retourner une liste d'intance d'Acteur avec les propriétés
      * Objectif de na pas avoir de duplication de données.
      *
      */
-    public void traitementDesActeurs(String monPath) {
+    public List<Acteur> traitementDesActeurs(String monPath) {
         lectureDeFichierCSV(monPath);
 
         /**
@@ -118,14 +118,15 @@ public class CsvService {
             acteur.setTaille(Float.parseFloat(values[4].replace(" m", "")));
             acteur.setUrl(values[5]);
             acteurs.add(acteur);
-            //System.out.println(acteurs);
         }
-        System.out.println(acteurs);
+        return acteurs;
     }
 
     /**
      * @param monPath
      * @return
+     *
+     * Cette méthode à pour objectif de retourner une liste d'intance de Pays avec les propriétés
      */
     public List<Pays> traitementDesPays(String monPath) {
         lectureDeFichierCSV(monPath);
@@ -139,8 +140,29 @@ public class CsvService {
             pays.setUrl(values[1]);
 
             mesPays.add(pays);
-            System.out.println(mesPays);
         }
         return mesPays;
+    }
+
+    /**
+     * @param monPath
+     * @return
+     *
+     * Cette méthode à pour objectif de retourner une liste d'intance de LieuNaissance avec les propriétés
+     *
+     */
+    public List<LieuNaissance> traitementDesLieuNaissance(String monPath) {
+        lectureDeFichierCSV(monPath);
+        List<LieuNaissance> lieuNaissances = new ArrayList<>();
+
+        for (int i = iMin; i < iMax; i++) {
+            String[] values = lines.get(i).split(";");
+
+            LieuNaissance lieuNaissance = new LieuNaissance();
+            lieuNaissance.setLocalisation(values[3].trim());
+
+            lieuNaissances.add(lieuNaissance);
+        }
+        return lieuNaissances;
     }
 }
