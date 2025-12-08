@@ -27,7 +27,7 @@ public class Film {
     private String nom;
 
     @Column(name = "date_sortie", nullable = false)
-    private String anneeSortie;
+    private String dateSortie;
 
     @Column(name = "rating", nullable = true, precision=4, scale=2)
     private float rating;
@@ -80,10 +80,10 @@ public class Film {
      * @param resume
      * @param pays
      */
-    public Film(String id, String nom, String anneeSortie, float rating, String url, String lieuTournage, Set<Genre> genres, Langue langue, String resume, Pays pays) {
+    public Film(String id, String nom, String dateSortie, float rating, String url, String lieuTournage, Set<Genre> genres, Langue langue, String resume, Pays pays) {
         this.id = id;
         this.nom = nom;
-        this.anneeSortie = anneeSortie;
+        this.dateSortie = dateSortie;
         this.rating = rating;
         this.url = url;
         this.lieuTournage = lieuTournage;
@@ -135,7 +135,7 @@ public class Film {
      * @return dateSortie
      */
     public String getDateSortie() {
-        return anneeSortie;
+        return dateSortie;
     }
 
     /**
@@ -143,8 +143,8 @@ public class Film {
      *
      * @param anneeSortie
      */
-    public void setDateSortie(String anneeSortie) {
-        this.anneeSortie = anneeSortie;
+    public void setDateSortie(String dateSortie) {
+        this.dateSortie = dateSortie;
     }
 
     /**
@@ -296,7 +296,7 @@ public class Film {
         return "Film: " +
                 "id= '" + id + '\'' +
                 ", nom= '" + nom + '\'' +
-                ", anneeSortie= " + anneeSortie +
+                ", dateSortie= " + dateSortie +
                 ", resume= '" + resume + '\'' +
                 ", genres= " + genres +
                 ", url= '" + url + '\'' +
