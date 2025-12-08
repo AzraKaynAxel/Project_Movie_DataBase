@@ -30,10 +30,13 @@
 - **3) Implémentation du traitement de fichier** 📄:
     - Lecture et traitement de fichiers CSV
     - Méthodes : 
-      - `lectureDeFichierCSV(String monPath)` - Lecture d'un fichier CSV et stockage des lignes (sans l'en-tête).
+      - `lectureDeFichierCSV(String monPath)` - Lecture d'un fichier CSV et stockage des lignes (sans l'en-tête) utilisées par les méthodes de traitement.
       - `traitementDesFilms(String monPath)` - Traitement des données de films depuis un fichier CSV et retour d'une liste d'instances `Film`.
-      - `traitementDesActeurs(String monPath)` - Traitement des données d'acteurs depuis un fichier CSV avec gestion des dates et lieux de naissance.
-      - `traitementDesPays(String monPath)` - Traitement des données de pays depuis un fichier CSV. Cette méthode lit un fichier CSV, parse chaque ligne séparée par ";" pour extraire le nom du pays (colonne 0) et l'URL (colonne 1), puis crée une liste d'instances `Pays` avec ces informations.
+      - `traitementDesActeurs(String monPath, EntityManager em)` - Création d'une liste d'`Acteur` en résolvant le lieu de naissance via requête JPA et en nettoyant la taille éventuelle.
+      - `traitementDesRealisateurs(String monPath, EntityManager em)` - Création d'une liste de `Personne` (réalisateurs) en hydratant l'identité, la date d'anniversaire, le lieu de naissance (via requête JPA) et l'URL.
+      - `traitementDesLieuNaissance(String monPath)` - Génération d'une liste de `LieuNaissance` à partir de la colonne localisation, avec nettoyage des espaces.
+      - `traitementDesGenres(String monPath)` - Extraction unique des genres présents dans la colonne dédiée grâce à une `HashMap`, puis conversion en liste de `Genre`.
+      - `traitementDesPays(String monPath)` - Lecture des pays (nom + URL) séparés par `;` et construction d'une liste d'instances `Pays`.
 
 *voir `src/main/java/fr/diginamic/services`* 📝.
 
