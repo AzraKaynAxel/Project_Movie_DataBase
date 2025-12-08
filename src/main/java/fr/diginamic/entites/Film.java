@@ -69,7 +69,7 @@ public class Film {
      *
      * @param id
      * @param nom
-     * @param dateSortie
+     * @param anneeSortie
      * @param rating
      * @param url
      * @param lieuTournage
