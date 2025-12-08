@@ -15,17 +15,17 @@ public class Role {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @Column(name="personnage", length=50, nullable = false)
     private String personnage;
 
     @ManyToOne
-    @JoinColumn(name="id_film", nullable = false)
+    @JoinColumn(name="id_film")
     private Film film;
 
     @ManyToOne
-    @JoinColumn(name="id_Acteur", nullable = true)
+    @JoinColumn(name="id_acteur")
     private Acteur acteur;
 
 

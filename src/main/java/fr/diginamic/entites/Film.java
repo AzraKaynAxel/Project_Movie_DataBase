@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDate;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -26,7 +27,7 @@ public class Film {
     private String nom;
 
     @Column(name = "date_sortie", nullable = false)
-    private LocalDate dateSortie;
+    private String anneeSortie;
 
     @Column(name = "rating", nullable = true, precision=4, scale=2)
     private float rating;
@@ -70,7 +71,7 @@ public class Film {
      *
      * @param id
      * @param nom
-     * @param dateSortie
+     * @param anneeSortie
      * @param rating
      * @param url
      * @param lieuTournage
@@ -79,10 +80,10 @@ public class Film {
      * @param resume
      * @param pays
      */
-    public Film(String id, String nom, LocalDate dateSortie, float rating, String url, String lieuTournage, Set<Genre> genres, Langue langue, String resume, Pays pays) {
+    public Film(String id, String nom, String anneeSortie, float rating, String url, String lieuTournage, Set<Genre> genres, Langue langue, String resume, Pays pays) {
         this.id = id;
         this.nom = nom;
-        this.dateSortie = dateSortie;
+        this.anneeSortie = anneeSortie;
         this.rating = rating;
         this.url = url;
         this.lieuTournage = lieuTournage;
@@ -133,17 +134,17 @@ public class Film {
      *
      * @return dateSortie
      */
-    public LocalDate getDateSortie() {
-        return dateSortie;
+    public String getDateSortie() {
+        return anneeSortie;
     }
 
     /**
      * Setter for dateSortie
      *
-     * @param dateSortie
+     * @param anneeSortie
      */
-    public void setDateSortie(LocalDate dateSortie) {
-        this.dateSortie = dateSortie;
+    public void setDateSortie(String anneeSortie) {
+        this.anneeSortie = anneeSortie;
     }
 
     /**
@@ -295,7 +296,7 @@ public class Film {
         return "Film: " +
                 "id= '" + id + '\'' +
                 ", nom= '" + nom + '\'' +
-                ", dateSortie= " + dateSortie +
+                ", anneeSortie= " + anneeSortie +
                 ", resume= '" + resume + '\'' +
                 ", genres= " + genres +
                 ", url= '" + url + '\'' +

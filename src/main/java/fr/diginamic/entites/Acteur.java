@@ -7,10 +7,10 @@ import javax.persistence.Table;
 import java.time.LocalDate;
 
 @Entity
-@Table(name="Acteur")
+@Table(name="acteur")
 public class Acteur extends Personne{
 
-    @Column(name="taille (m)", nullable=false ,precision=3,scale=2)
+    @Column(name="taille_m", nullable=false, precision=3, scale=2)
     private float taille;
 
 
@@ -26,12 +26,11 @@ public class Acteur extends Personne{
      * @param identite
      * @param dateAnniversaire
      * @param lieuNaissance
-     * @param pays
      * @param url
      * @param taille
      */
-    public Acteur(String id, String identite, LocalDate dateAnniversaire, String lieuNaissance, Pays pays, String url, float taille) {
-        super(id, identite, dateAnniversaire, lieuNaissance, pays, url);
+    public Acteur(String id, String identite, LocalDate dateAnniversaire, LieuNaissance lieuNaissance, String url, float taille) {
+        super(id, identite, dateAnniversaire, lieuNaissance, url);
         this.taille = taille;
     }
 
