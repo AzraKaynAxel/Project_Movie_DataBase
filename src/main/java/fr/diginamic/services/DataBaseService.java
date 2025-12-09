@@ -61,11 +61,8 @@ public class DataBaseService {
             for (Film film : films) {
                 TypedQuery<Long> query = em.createQuery(REQUETE_SUPPR_DOUBLON_FILM, Long.class);
                 query.setParameter("value", film.getId());
-                Long count = query.getSingleResult();
 
-                System.out.println("-".repeat(100));
-                System.out.println(film.getId() + ' ' + film.getNom() + ' ' + count);
-                System.out.println("-".repeat(100));
+                Long count = query.getSingleResult();
 
                 if (count > 0) {
                     System.out.println("-".repeat(100));
@@ -134,10 +131,6 @@ public class DataBaseService {
                 TypedQuery<Long> query = em.createQuery(REQUETE_SUPPR_DOUBLON_REA, Long.class);
                 query.setParameter("value", personne.getId());
                 Long count = query.getSingleResult();
-
-                System.out.println("-".repeat(100));
-                System.out.println(personne.getId() + ' ' + personne.getIdentite() + ' ' + count);
-                System.out.println("-".repeat(100));
 
                 if (count > 0) {
                     System.out.println("-".repeat(100));

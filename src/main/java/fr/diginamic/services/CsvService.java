@@ -1,5 +1,9 @@
 package fr.diginamic.services;
 
+import com.opencsv.CSVParserBuilder;
+import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvException;
 import fr.diginamic.entites.Acteur;
 import fr.diginamic.entites.Film;
 import fr.diginamic.entites.Genre;
@@ -11,6 +15,7 @@ import fr.diginamic.entites.Personne;
 import javax.crypto.spec.PSource;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
+import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -30,7 +35,7 @@ import java.util.Set;
 public class CsvService {
 
     private Path path;
-    List<String> lines;
+    List<String[]> lines;
     int iMin = 0; // pour tester les listes petit à petit
     int iMax = 300;
 
@@ -39,71 +44,117 @@ public class CsvService {
     private static final String REQUETE_RECUP_GENRE = "SELECT e FROM Genre e WHERE e.nom = :value";
     private static final String REQUETE_RECUP_LANGUE = "SELECT e FROM Langue e WHERE e.nom = :value";
 
+
+    /**
+     * @param monPath
+     *
+     * Méthode qui vient lire le fichier et utilise la brairie OpenCSV pour faire la séparation.
+     * Elle enlève aussi l'en-tête.
+     */
     public void lectureDeFichierCSV(String monPath) {
-        Path pathOrigin = Paths.get(monPath);
 
-        boolean exists = Files.exists(pathOrigin);
 
-        if (exists) {
-            try {
-                lines = Files.readAllLines(pathOrigin, StandardCharsets.UTF_8);
+        try (CSVReader csvReader = new CSVReaderBuilder(new FileReader(monPath))
+                .withCSVParser(new CSVParserBuilder().withSeparator(';').build())
+                .build()) {
+
+            lines = csvReader.readAll();
+
+            if (!lines.isEmpty()) {
                 lines.remove(0);
-            } catch (IOException e) {
-                System.err.println(e.getMessage());
             }
-        }
 
+        } catch (CsvException e) {
+            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
+    /**
+     * @param monPath
+     * @param em
+     * @return
+     *
+     * Cette méthode a pour but de venir traiter les films un par un.
+     * Une fois que la ligne a été spliter par la librairi, on vérifie à chaque fois
+     * si la colonne de la ligne peut-être traiter ou non.
+     * Permet de pas avoir d'exception à l'insettion
+     */
     public List<Film> traitementDesFilms(String monPath, EntityManager em) {
+
         lectureDeFichierCSV(monPath);
 
         // Notre date dans le fichier est ex: 1964 donc pas besoin de faire attention à la case
         //DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy");
         List<Film> films = new ArrayList<>();
 
-        for (int i = iMin; i < 1000; i++) {
-            String[] values = lines.get(i).split(";", 10);
-            String[] tabGenre = values[6].trim().split(",");
+        for (int i = iMin; i < lines.size(); i++) {
+            String[] raw = lines.get(i);
 
+            // Cette étape viens igniorer les lignes qui ne sont pas conform
+            if (raw.length < 10) {
+                System.err.println("La ligne n'a pas le nombre de colonne obligatoire" + Arrays.toString(raw));
+                continue;
+            }
 
-            //LieuNaissance lieuNaissanceResult = selectLieuNaissance.getSingleResult();
 
             Film film = new Film();
 
-            for (int j = 0; j < tabGenre.length; j++) {
-                TypedQuery<Genre> selectGenres = em.createQuery(REQUETE_RECUP_GENRE, Genre.class);
-                selectGenres.setParameter("value", tabGenre[j]);
-                Genre genre = selectGenres.getSingleResult();
-                film.getGenres().add(genre);
+            // traitement de cette colonne qui si elle n'est pas vide pour éviter une casse
+            if (!raw[6].trim().isEmpty()) {
+                String[] tabGenre = raw[6].trim().split(",");
+                for (int j = 0; j < tabGenre.length; j++) {
+                    TypedQuery<Genre> selectGenres = em.createQuery(REQUETE_RECUP_GENRE, Genre.class);
+                    selectGenres.setParameter("value", tabGenre[j]);
+
+                    System.out.println("-".repeat(100));
+                    System.out.println(tabGenre[j]);
+                    System.out.println(Arrays.toString(raw));
+                    System.out.println("-".repeat(100));
+
+                    Genre genre = selectGenres.getSingleResult();
+                    film.getGenres().add(genre);
+                }
             }
 
-            if (!values[3].isEmpty()) {
-                film.setRating(Float.parseFloat(values[3]));
+            // Remplace les virgules par des point pour éviter la case du parseFloat
+            if (!raw[3].isEmpty()) {
+                film.setRating(Float.parseFloat(raw[3].trim().replace(",", ".")));
             }
 
-            if (!values[7].isEmpty()) {
+            if (!raw[7].isEmpty()) {
                 TypedQuery<Langue> selectLangue = em.createQuery(REQUETE_RECUP_LANGUE, Langue.class);
-                selectLangue.setParameter("value", values[7]);
+                selectLangue.setParameter("value", raw[7]);
                 Langue langue = selectLangue.getSingleResult();
                 film.setLangue(langue);
             } else {
                 film.setLangue(null);
             }
 
-            if (!values[9].isEmpty()) {
-                TypedQuery<Pays> selectPays = em.createQuery(REQUETE_RECUP_PAYS, Pays.class);
-                selectPays.setParameter("value", values[9]);
+            // Gère la concaténation du résumé
+            if (raw.length == 10){
+                // Cas normal pas besoin gestion simple
+                film.setResume(raw[8]);
+            } else {
+                // Cas où le résumé contient des ';' qui seront interpréter comme des séparateurs donc +colonnes
+                film.setResume(String.join(";", Arrays.copyOfRange(raw, 8, raw.length - 1)));
+            }
 
-                System.out.println("-".repeat(100));
-                System.out.println(Arrays.toString(values));
-                System.out.println("-".repeat(100));
+            if (!raw[raw.length-1].isEmpty()) {
+                TypedQuery<Pays> selectPays = em.createQuery(REQUETE_RECUP_PAYS, Pays.class);
+                selectPays.setParameter("value", raw[raw.length-1]);
+
+                /*System.out.println("-".repeat(100));
+                System.out.println(raw[raw.length-1]);
+                System.out.println(Arrays.toString(raw));
+                System.out.println("-".repeat(100));*/
 
                 Pays pays = selectPays.getSingleResult();
 
-                System.out.println("-".repeat(100));
+                /*System.out.println("-".repeat(100));
                 System.out.println(pays);
-                System.out.println("-".repeat(100));
+                System.out.println("-".repeat(100));*/
 
                 film.setPays(pays);
             } else {
@@ -111,12 +162,12 @@ public class CsvService {
             }
 
 
-            film.setId(values[0]);
-            film.setNom(values[1]);
-            film.setDateSortie(values[2]);
-            film.setUrl(values[4]);
-            film.setLieuTournage(values[5]);
-            film.setResume(values[8]);
+            film.setId(raw[0]);
+            film.setNom(raw[1]);
+            film.setDateSortie(raw[2]);
+            film.setUrl(raw[4]);
+            film.setLieuTournage(raw[5]);
+
 
             System.out.println(film.toString());
 
@@ -149,7 +200,7 @@ public class CsvService {
         List<Acteur> acteurs = new ArrayList<>();
 
         for (int i = iMin; i < lines.size(); i++) {
-            String[] values = lines.get(i).split(";");
+            String[] values = lines.get(i);
 
 
             Acteur acteur = new Acteur();
@@ -199,7 +250,7 @@ public class CsvService {
         HashMap<String, Personne> realisateurs = new HashMap<>();
 
         for (int i = iMin; i < lines.size(); i++) {
-            String[] values = lines.get(i).split(";");
+            String[] values = lines.get(i);
 
 
             if (!realisateurs.containsKey(values[0].trim()) && !values[0].trim().isEmpty()) {
@@ -234,7 +285,7 @@ public class CsvService {
         List<Pays> mesPays = new ArrayList<>();
 
         for (int i = iMin; i < lines.size(); i++) {
-            String[] values = lines.get(i).split(";");
+            String[] values = lines.get(i);
 
             Pays pays = new Pays();
             pays.setNom(values[0]);
@@ -257,7 +308,7 @@ public class CsvService {
         List<LieuNaissance> lieuNaissances = new ArrayList<>();
 
         for (int i = iMin; i < lines.size(); i++) {
-            String[] values = lines.get(i).split(";");
+            String[] values = lines.get(i);
 
             LieuNaissance lieuNaissance = new LieuNaissance();
 
@@ -284,7 +335,7 @@ public class CsvService {
         HashMap<String, Genre> genres = new HashMap<>();
 
         for (int i = iMin; i < lines.size(); i++) {
-            String[] values = lines.get(i).split(";");
+            String[] values = lines.get(i);
             String[] tabGenres = values[6].trim().split(",");
             for (int j = 0; j < tabGenres.length ; j++) {
                 if (!genres.containsKey(tabGenres[j]) && !tabGenres[j].isEmpty()) {
@@ -312,7 +363,7 @@ public class CsvService {
         HashMap<String, Langue> langues = new HashMap<>();
 
         for (int i = iMin; i < lines.size(); i++) {
-            String[] values = lines.get(i).split(";");
+            String[] values = lines.get(i);
 
             if (!langues.containsKey(values[7].trim()) && !values[7].trim().isEmpty()) {
                 Langue langue = new Langue();

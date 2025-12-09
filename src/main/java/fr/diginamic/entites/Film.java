@@ -22,7 +22,7 @@ public class Film {
     @Column(name="id")
     private String id;
 
-    @Column(name = "nom", length = 100, nullable = false, unique = true)
+    @Column(name = "nom", length = 100, nullable = false)
     private String nom;
 
     @Column(name = "date_sortie", nullable = false)
@@ -37,7 +37,7 @@ public class Film {
     @Column(name="lieu_tournage", length=255, nullable = false)
     private String lieuTournage;
 
-    @Column(name="resume", columnDefinition="TEXT", length=255, nullable = false)
+    @Column(name="resume", columnDefinition="MEDIUMTEXT", length=255, nullable = false)
     private String resume;
 
     @ManyToMany

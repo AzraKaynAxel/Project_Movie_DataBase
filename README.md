@@ -6,7 +6,7 @@
 
 **Prérequis** ✅:
 - **Code**: structure de projet Java/Maven prête.
-- **Configuration du pom.xml**: dépendances Hibernate, MariaDB JDBC et JUnit Jupiter configurées.
+- **Configuration du pom.xml**: dépendances Hibernate, MariaDB JDBC, JUnit Jupiter et **OpenCSV 5.12.0** configurées.
 - **Configuration JPA**: `persistence.xml` présent dans `src/main/resources/META-INF` (et copié dans `target/classes/META-INF` après compilation) ⚙️.
 
 ## Détails des étapes à réalisées 🚧 :
@@ -28,14 +28,16 @@
 
 ### Réalisation sur la branche *`feature/TraitementFichier`*
 - **3) Implémentation du traitement de fichier** 📄:
-    - Lecture et traitement de fichiers CSV
+    - Lecture et traitement de fichiers CSV avec la bibliothèque **OpenCSV** (version 5.12.0)
+    - Utilisation de `CSVReader`, `CSVReaderBuilder` et `CSVParserBuilder` pour le parsing des fichiers CSV avec séparateur `;`
     - Méthodes : 
-      - `lectureDeFichierCSV(String monPath)` - Lecture d'un fichier CSV et stockage des lignes (sans l'en-tête) utilisées par les méthodes de traitement.
+      - `lectureDeFichierCSV(String monPath)` - Lecture d'un fichier CSV avec OpenCSV (séparateur `;`), stockage des lignes parsées dans une liste de tableaux de chaînes (sans l'en-tête), utilisées par les méthodes de traitement.
       - `traitementDesFilms(String monPath)` - Traitement des données de films depuis un fichier CSV et retour d'une liste d'instances `Film`.
       - `traitementDesActeurs(String monPath, EntityManager em)` - Création d'une liste d'`Acteur` en résolvant le lieu de naissance via requête JPA et en nettoyant la taille éventuelle.
       - `traitementDesRealisateurs(String monPath, EntityManager em)` - Création d'une liste de `Personne` (réalisateurs) en hydratant l'identité, la date d'anniversaire, le lieu de naissance (via requête JPA) et l'URL.
       - `traitementDesLieuNaissance(String monPath)` - Génération d'une liste de `LieuNaissance` à partir de la colonne localisation, avec nettoyage des espaces.
       - `traitementDesGenres(String monPath)` - Extraction unique des genres présents dans la colonne dédiée grâce à une `HashMap`, puis conversion en liste de `Genre`.
+      - `traitementDesLangues(String monPath)` - Extraction unique des langues présents dans la colonne dédiée grâce à une `HashMap`, puis conversion en liste de `Langue`.
       - `traitementDesPays(String monPath)` - Lecture des pays (nom + URL) séparés par `;` et construction d'une liste d'instances `Pays`.
 
 *voir `src/main/java/fr/diginamic/services`* 📝.
