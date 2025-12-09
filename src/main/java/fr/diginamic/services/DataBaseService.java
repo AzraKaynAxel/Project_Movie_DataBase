@@ -3,6 +3,7 @@ package fr.diginamic.services;
 import fr.diginamic.entites.Acteur;
 import fr.diginamic.entites.Film;
 import fr.diginamic.entites.Genre;
+import fr.diginamic.entites.Langue;
 import fr.diginamic.entites.LieuNaissance;
 import fr.diginamic.entites.Pays;
 import fr.diginamic.entites.Personne;
@@ -18,6 +19,8 @@ public class DataBaseService {
 
     private static final EntityManagerFactory emf = Persistence.createEntityManagerFactory("ConfigDev1");;
     private static final String PARAM_REQUETE = "SELECT COUNT(e) FROM LieuNaissance e WHERE e.localisation = :value";
+    private static final String REQUETE_SUPPR_DOUBLON_REA = "SELECT COUNT(e) FROM Personne e WHERE e.identite = :value";
+    private static final String REQUETE_SUPPR_DOUBLON_FILM = "SELECT COUNT(e) FROM Film e WHERE e.id = :value";
 
     public static EntityManager connexionDataBase (){
         return emf.createEntityManager();
@@ -36,7 +39,6 @@ public class DataBaseService {
             /**
              * Première partie pour insérer les genres
              */
-
             List<Genre> mesGenres = csvService.traitementDesGenres(monPath);
 
             for (Genre genre : mesGenres) {
@@ -44,12 +46,34 @@ public class DataBaseService {
             }
 
             /**
-             * Deuxème partie pour insérer les Acteurs
+             * Deuxème partie pour insérer les langues
+             */
+            List<Langue> langues = csvService.traitementDesLangues(monPath);
+            for (Langue langue : langues) {
+                em.persist(langue);
+            }
+
+            /**
+             * Troisième partie pour insérer les films
              */
             List<Film> films = csvService.traitementDesFilms(monPath, em);
 
             for (Film film : films) {
-                em.persist(film);
+                TypedQuery<Long> query = em.createQuery(REQUETE_SUPPR_DOUBLON_FILM, Long.class);
+                query.setParameter("value", film.getId());
+                Long count = query.getSingleResult();
+
+                System.out.println("-".repeat(100));
+                System.out.println(film.getId() + ' ' + film.getNom() + ' ' + count);
+                System.out.println("-".repeat(100));
+
+                if (count > 0) {
+                    System.out.println("-".repeat(100));
+                    System.out.println(film + " déjà existant");
+                    System.out.println("-".repeat(100));
+                } else {
+                    em.persist(film);
+                }
             }
         } else if (monPath.contains("pays.csv")) {
             List<Pays> mesPays = csvService.traitementDesPays(monPath);
@@ -107,7 +131,21 @@ public class DataBaseService {
             List<Personne> mesRealisateurs = csvService.traitementDesRealisateurs(monPath, em);
 
             for (Personne personne : mesRealisateurs){
-                em.persist(personne);
+                TypedQuery<Long> query = em.createQuery(REQUETE_SUPPR_DOUBLON_REA, Long.class);
+                query.setParameter("value", personne.getId());
+                Long count = query.getSingleResult();
+
+                System.out.println("-".repeat(100));
+                System.out.println(personne.getId() + ' ' + personne.getIdentite() + ' ' + count);
+                System.out.println("-".repeat(100));
+
+                if (count > 0) {
+                    System.out.println("-".repeat(100));
+                    System.out.println(personne + " déjà existant");
+                    System.out.println("-".repeat(100));
+                } else {
+                    em.persist(personne);
+                }
             }
         } else {
             System.out.println("coucou");

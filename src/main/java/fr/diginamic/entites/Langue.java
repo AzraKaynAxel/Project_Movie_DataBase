@@ -23,4 +23,54 @@ public class Langue {
 
     @OneToMany(mappedBy="langue")
     private List<Film> films;
+
+    public Langue () {}
+
+    public Langue(String nom) {
+        this.nom = nom;
+    }
+
+    /**
+     * Getter for nom
+     *
+     * @return nom
+     */
+    public String getNom() {
+        return nom;
+    }
+
+    /**
+     * Setter for nom
+     *
+     * @param nom
+     */
+    public void setNom(String nom) {
+        this.nom = nom;
+    }
+
+    /**
+     * Getter for films
+     *
+     * @return films
+     */
+    public List<Film> getFilms() {
+        return films;
+    }
+
+    /**
+     * Setter for films
+     *
+     * @param films
+     */
+    public void setFilms(List<Film> films) {
+        this.films = films;
+    }
+
+    @Override
+    public String toString() {
+        return "Langue: " +
+                "id= " + id +
+                ", nom= '" + nom + '\'' +
+                ", films= " + films;
+    }
 }
