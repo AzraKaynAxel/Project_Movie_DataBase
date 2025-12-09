@@ -32,11 +32,12 @@ public class CsvService {
     private Path path;
     List<String> lines;
     int iMin = 0; // pour tester les listes petit à petit
-    int iMax = 100;
+    int iMax = 300;
 
     private static final String REQUETE_RECUP_LIEU_NAISSANCE = "SELECT e FROM LieuNaissance e WHERE e.localisation = :value";
     private static final String REQUETE_RECUP_PAYS = "SELECT e FROM Pays e WHERE e.nom = :value";
     private static final String REQUETE_RECUP_GENRE = "SELECT e FROM Genre e WHERE e.nom = :value";
+    private static final String REQUETE_RECUP_LANGUE = "SELECT e FROM Langue e WHERE e.nom = :value";
 
     public void lectureDeFichierCSV(String monPath) {
         Path pathOrigin = Paths.get(monPath);
@@ -61,8 +62,8 @@ public class CsvService {
         //DateTimeFormatter pattern = DateTimeFormatter.ofPattern("yyyy");
         List<Film> films = new ArrayList<>();
 
-        for (int i = iMin; i < iMax; i++) {
-            String[] values = lines.get(i).split(";");
+        for (int i = iMin; i < 1000; i++) {
+            String[] values = lines.get(i).split(";", 10);
             String[] tabGenre = values[6].trim().split(",");
 
 
@@ -81,9 +82,34 @@ public class CsvService {
                 film.setRating(Float.parseFloat(values[3]));
             }
 
-            TypedQuery<Pays> selectPays = em.createQuery(REQUETE_RECUP_PAYS, Pays.class);
-            selectPays.setParameter("value", values[values.length - 1]);
-            Pays pays = selectPays.getSingleResult();
+            if (!values[7].isEmpty()) {
+                TypedQuery<Langue> selectLangue = em.createQuery(REQUETE_RECUP_LANGUE, Langue.class);
+                selectLangue.setParameter("value", values[7]);
+                Langue langue = selectLangue.getSingleResult();
+                film.setLangue(langue);
+            } else {
+                film.setLangue(null);
+            }
+
+            if (!values[9].isEmpty()) {
+                TypedQuery<Pays> selectPays = em.createQuery(REQUETE_RECUP_PAYS, Pays.class);
+                selectPays.setParameter("value", values[9]);
+
+                System.out.println("-".repeat(100));
+                System.out.println(Arrays.toString(values));
+                System.out.println("-".repeat(100));
+
+                Pays pays = selectPays.getSingleResult();
+
+                System.out.println("-".repeat(100));
+                System.out.println(pays);
+                System.out.println("-".repeat(100));
+
+                film.setPays(pays);
+            } else {
+                film.setPays(null);
+            }
+
 
             film.setId(values[0]);
             film.setNom(values[1]);
@@ -91,10 +117,12 @@ public class CsvService {
             film.setUrl(values[4]);
             film.setLieuTournage(values[5]);
             film.setResume(values[8]);
-            film.setPays(pays);
+
+            System.out.println(film.toString());
 
             films.add(film);
         }
+
         return films;
     }
 
@@ -120,12 +148,8 @@ public class CsvService {
 
         List<Acteur> acteurs = new ArrayList<>();
 
-        for (int i = iMin; i < iMax; i++) {
+        for (int i = iMin; i < lines.size(); i++) {
             String[] values = lines.get(i).split(";");
-
-            TypedQuery<LieuNaissance> selectLieuNaissance = em.createQuery(REQUETE_RECUP_LIEU_NAISSANCE, LieuNaissance.class);
-            selectLieuNaissance.setParameter("value", values[3]);
-            LieuNaissance lieuNaissanceResult = selectLieuNaissance.getSingleResult();
 
 
             Acteur acteur = new Acteur();
@@ -133,10 +157,16 @@ public class CsvService {
             acteur.setId(values[0]);
             acteur.setIdentite(values[1]);
             acteur.setDateAnniversaire(values[2]);
-            acteur.setLieuNaissance(lieuNaissanceResult);
+
+            if (!values[3].trim().isEmpty()) {
+                TypedQuery<LieuNaissance> selectLieuNaissance = em.createQuery(REQUETE_RECUP_LIEU_NAISSANCE, LieuNaissance.class);
+                selectLieuNaissance.setParameter("value", values[3]);
+                LieuNaissance lieuNaissanceResult = selectLieuNaissance.getSingleResult();
+                acteur.setLieuNaissance(lieuNaissanceResult);
+            }
 
             if (!values[4].isEmpty()) {
-                acteur.setTaille(Float.parseFloat(values[4].replace(" m", "")));
+                acteur.setTaille(Float.parseFloat(values[4].replaceAll("[^\\d.,]", "").replace(",", ".")));
             }
 
             acteur.setUrl(values[5]);
@@ -165,26 +195,32 @@ public class CsvService {
          */
         //DateTimeFormatter pattern = new DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern("MMMM d yyyy").toFormatter(Locale.ENGLISH);
 
-        List<Personne> realisateurs = new ArrayList<>();
+        //List<Personne> realisateurs = new ArrayList<>();
+        HashMap<String, Personne> realisateurs = new HashMap<>();
 
-        for (int i = iMin; i < iMax; i++) {
+        for (int i = iMin; i < lines.size(); i++) {
             String[] values = lines.get(i).split(";");
 
-            TypedQuery<LieuNaissance> selectLieuNaissance = em.createQuery(REQUETE_RECUP_LIEU_NAISSANCE, LieuNaissance.class);
-            selectLieuNaissance.setParameter("value", values[3]);
-            LieuNaissance lieuNaissanceResult = selectLieuNaissance.getSingleResult();
 
+            if (!realisateurs.containsKey(values[0].trim()) && !values[0].trim().isEmpty()) {
+                Personne personne = new Personne();
+                personne.setId(values[0]);
+                personne.setIdentite(values[1]);
+                personne.setDateAnniversaire(values[2]);
 
-            Personne personne = new Personne();
-            personne.setId(values[0]);
-            personne.setIdentite(values[1]);
-            personne.setDateAnniversaire(values[2]);
-            personne.setLieuNaissance(lieuNaissanceResult);
-            personne.setUrl(values[4]);
+                if (!values[3].trim().isEmpty()) {
+                    TypedQuery<LieuNaissance> selectLieuNaissance = em.createQuery(REQUETE_RECUP_LIEU_NAISSANCE, LieuNaissance.class);
+                    selectLieuNaissance.setParameter("value", values[3]);
+                    LieuNaissance lieuNaissanceResult = selectLieuNaissance.getSingleResult();
+                    personne.setLieuNaissance(lieuNaissanceResult);
+                }
 
-            realisateurs.add(personne);
+                personne.setUrl(values[4]);
+
+                realisateurs.put(values[0].trim(), personne);
+            }
         }
-        return realisateurs;
+        return new ArrayList<>(realisateurs.values());
     }
 
     /**
@@ -220,13 +256,15 @@ public class CsvService {
         lectureDeFichierCSV(monPath);
         List<LieuNaissance> lieuNaissances = new ArrayList<>();
 
-        for (int i = iMin; i < iMax; i++) {
+        for (int i = iMin; i < lines.size(); i++) {
             String[] values = lines.get(i).split(";");
 
             LieuNaissance lieuNaissance = new LieuNaissance();
-            lieuNaissance.setLocalisation(values[3].trim());
 
-            lieuNaissances.add(lieuNaissance);
+            if (!values[3].trim().isEmpty()) {
+                lieuNaissance.setLocalisation(values[3].trim());
+                lieuNaissances.add(lieuNaissance);
+            }
         }
         return lieuNaissances;
     }
@@ -235,7 +273,7 @@ public class CsvService {
      * @param monPath
      * @return
      *
-     * Cette méthode à pour objectif de retourner une liste d'intance de Genre avec les propriétés
+     * Cette méthode a pour objectif de retourner une liste d'intance de Genre avec les propriétés
      * Utilisation de HashMap pour ne pas avoir de doublons
      *
      */
@@ -249,7 +287,7 @@ public class CsvService {
             String[] values = lines.get(i).split(";");
             String[] tabGenres = values[6].trim().split(",");
             for (int j = 0; j < tabGenres.length ; j++) {
-                if (!genres.containsKey(tabGenres[j])) {
+                if (!genres.containsKey(tabGenres[j]) && !tabGenres[j].isEmpty()) {
                     Genre genre = new Genre();
                     genre.setNom(tabGenres[j]);
                     genres.put(tabGenres[j], genre);
@@ -259,5 +297,31 @@ public class CsvService {
 
         // Pour transformer une HashMap en List
         return new ArrayList<>(genres.values());
+    }
+
+    /**
+     * @param monPath
+     * @return
+     *
+     * Cette méthode a pour objectif de retourner une liste d'intance de Langue avec les propriétés
+     * Utilisation de HashMap pour ne pas avoir de doublons
+     */
+    public List<Langue> traitementDesLangues(String monPath) {
+        lectureDeFichierCSV(monPath);
+
+        HashMap<String, Langue> langues = new HashMap<>();
+
+        for (int i = iMin; i < lines.size(); i++) {
+            String[] values = lines.get(i).split(";");
+
+            if (!langues.containsKey(values[7].trim()) && !values[7].trim().isEmpty()) {
+                Langue langue = new Langue();
+                langue.setNom(values[7].trim());
+                langues.put(values[7].trim(), langue);
+            }
+        }
+
+        // Pour retourner une liste
+        return new ArrayList<>(langues.values());
     }
 }

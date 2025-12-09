@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -21,7 +22,7 @@ public class Film {
     @Column(name="id")
     private String id;
 
-    @Column(name = "nom", length = 50, nullable = false, unique = true)
+    @Column(name = "nom", length = 100, nullable = false, unique = true)
     private String nom;
 
     @Column(name = "date_sortie", nullable = false)
@@ -33,7 +34,7 @@ public class Film {
     @Column(name = "url", length = 255, nullable = true)
     private String url;
 
-    @Column(name="lieu_tournage", length=50, nullable = false)
+    @Column(name="lieu_tournage", length=255, nullable = false)
     private String lieuTournage;
 
     @Column(name="resume", columnDefinition="TEXT", length=255, nullable = false)
@@ -41,18 +42,18 @@ public class Film {
 
     @ManyToMany
     @JoinTable(name="fil_pers", joinColumns=@JoinColumn(name="id_fil", referencedColumnName="id"), inverseJoinColumns=@JoinColumn(name="id_pers", referencedColumnName="id"))
-    private Set<Personne> realisteurs;
+    private Set<Personne> realisteurs = new HashSet<>();
 
     @ManyToMany
     @JoinTable(name="fil_ger", joinColumns=@JoinColumn(name="id_fil", referencedColumnName="id"), inverseJoinColumns=@JoinColumn(name="id_ger", referencedColumnName="id"))
-    private Set<Genre> genres;
+    private Set<Genre> genres = new HashSet<>();
 
     @ManyToOne
-    @JoinColumn(name="id_pays", nullable=false)
+    @JoinColumn(name="id_pays", nullable = true)
     private Pays pays;
 
     @ManyToOne
-    @JoinColumn(name="id_langue", nullable = false)
+    @JoinColumn(name="id_langue", nullable = true)
     private Langue langue;
 
     @OneToMany(mappedBy="film")
@@ -69,7 +70,7 @@ public class Film {
      *
      * @param id
      * @param nom
-     * @param anneeSortie
+     * @param dateSortie
      * @param rating
      * @param url
      * @param lieuTournage
@@ -139,7 +140,7 @@ public class Film {
     /**
      * Setter for dateSortie
      *
-     * @param anneeSortie
+     * @param dateSortie
      */
     public void setDateSortie(String dateSortie) {
         this.dateSortie = dateSortie;

@@ -16,7 +16,7 @@ public class LieuNaissance {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private int id;
 
-    @Column(name="localisation", length=80, nullable=false)
+    @Column(name="localisation", length=255, nullable=false)
     private String localisation;
 
 
