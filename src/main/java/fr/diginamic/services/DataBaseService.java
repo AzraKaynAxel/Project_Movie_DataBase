@@ -22,11 +22,26 @@ public class DataBaseService {
     private static final String REQUETE_SUPPR_DOUBLON_REA = "SELECT COUNT(e) FROM Personne e WHERE e.identite = :value";
     private static final String REQUETE_SUPPR_DOUBLON_FILM = "SELECT COUNT(e) FROM Film e WHERE e.id = :value";
 
+
+    /**
+     * @return
+     *
+     * Créer l'entity Factory pour la Connection à la BDD
+     */
     public static EntityManager connexionDataBase (){
         return emf.createEntityManager();
     }
 
+    /**
+     * @param monPath
+     *
+     * Vient faire les insertions en fonction du chemin passé en paramètre
+     */
     public void insertionDataBase(String monPath) {
+
+        // TODO Close la connexion
+
+
         EntityManager em = connexionDataBase();
         EntityTransaction transaction = em.getTransaction();
 
