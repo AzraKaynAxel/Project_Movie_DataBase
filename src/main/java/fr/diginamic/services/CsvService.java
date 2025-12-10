@@ -45,6 +45,11 @@ public class CsvService {
     private static final String REQUETE_RECUP_LANGUE = "SELECT e FROM Langue e WHERE e.nom = :value";
 
 
+    // TODO Faire le traitement des deux dernier fichier
+    // TODO Si possible rendre optimal l'ensemble du code
+    // TODO Essayer sans la librairie OpenCSV
+
+
     /**
      * @param monPath
      *
